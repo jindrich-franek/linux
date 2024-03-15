@@ -21,10 +21,10 @@ obracena_pismena = {
  #   return ''.join(obracena_pismena.get(c, c) for c in reversed(text))
    
 # print(obrat(obracena_pismena))
+exit_code = 0
 
-
-def otoc(text):
-    navratova_hodnota = 0 
+def otoc(vstup):
+    global exit_code  
     vysledek = ''
     for znak in vstup:
         if znak in obracena_pismena:
@@ -33,14 +33,15 @@ def otoc(text):
             hodnota = ""
         else:
             hodnota = znak
-            navratova_hodnota = 2
-        vysledek =   hodnota + vysledek
-    return(vysledek.strip(), navratova_hodnota)
+            if exit_code != 2:
+                exit_code = 2
+        vysledek =   hodnota + vysledek 
+    return  vysledek.strip(), exit_code
 
 def chybovy_vystup():
-    if otoc(vstup)[1] == 0:
+    if exit_code == 0:
         exit(0)
-    elif otoc(vstup)[1] == 2:
+    elif exit_code == 2:
         exit(2)
 
 soubory = []
@@ -52,7 +53,7 @@ for arg in sys.argv[1:]:
         exit(f"Zadat lze - nebo dokument jménem .txt")
     elif arg.startswith("-"):
         #sys.stderr.write("Přepínač ")
-        #sys.stderr.write(soubor)
+        #sys.stderr.write(soubor)s
         #sys.stderr.write(" neexistuje viz --help")
         #sys.stderr.write(x)
         sys.exit(f"Přepínač {arg}  neexistuje viz --help") 
@@ -61,22 +62,24 @@ for arg in sys.argv[1:]:
         
 if soubory == []:    
     vstup = sys.stdin.read()
-    print(otoc(vstup)[0])
-    x = chybovy_vystup()
+    vysledek, exit_code = otoc(vstup)
+    print(vysledek)
+    x=chybovy_vystup()
                       
 for soubor in soubory:
     if soubor == "-":
         vstup = sys.stdin.read()
-        print(otoc(soubor)[0])
-        x = chybovy_vystup()              
+        vysledek, exit_code = otoc(vstup)
+        print(vysledek)
+        x=chybovy_vystup()             
     else:    
         with open (soubor, encoding="utf-8") as s:
             text = s.readlines()
-            vysledek = ''
             for vstup in text:
-                print(otoc(soubor)[0])
-            x = chybovy_vystup() 
-
+                vysledek, exit_code = otoc(vstup)
+                print(vysledek)
+            chybovy_vystup()
+                
 
 
 
