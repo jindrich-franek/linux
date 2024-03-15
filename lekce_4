@@ -18,9 +18,9 @@ obracena_pismena = {
 }
 
 # def obrat(text):
- #   return ''.join(obracena_pismena.get(c, c) for c in reversed(text))
-   
+ #   return ''.join(obracena_pismena.get(c, c) for c in reversed(text))   
 # print(obrat(obracena_pismena))
+
 exit_code = 0
 
 def otoc(vstup):
@@ -33,8 +33,7 @@ def otoc(vstup):
             hodnota = ""
         else:
             hodnota = znak
-            if exit_code != 2:
-                exit_code = 2
+            exit_code = 2
         vysledek =   hodnota + vysledek 
     return  vysledek.strip(), exit_code
 
@@ -53,7 +52,7 @@ for arg in sys.argv[1:]:
         exit(f"Zadat lze - nebo dokument jménem .txt")
     elif arg.startswith("-"):
         #sys.stderr.write("Přepínač ")
-        #sys.stderr.write(soubor)s
+        #sys.stderr.write(soubor)
         #sys.stderr.write(" neexistuje viz --help")
         #sys.stderr.write(x)
         sys.exit(f"Přepínač {arg}  neexistuje viz --help") 
