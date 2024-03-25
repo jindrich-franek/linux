@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 import sys
+import os
 
 obracena_pismena = {
     'a': 'ɐ', 'b': 'q', 'c': 'ɔ', 'd': 'p', 'e': 'ǝ', 'f': 'ɟ', 'g': 'ƃ',
@@ -18,37 +19,32 @@ obracena_pismena = {
 }
 
 # def obrat(text):
- #   return ''.join(obracena_pismena.get(c, c) for c in reversed(text))   
+ #   return ''.join(obracena_pismena.get(c, c) for c in reversed(text))
 # print(obrat(obracena_pismena))
 
-exit_code = 0
+
 
 def otoc(vstup):
-    global exit_code  
+    exit_code = 0
     vysledek = ''
-    for znak in vstup:
+    for znak in vstup: 
         if znak in obracena_pismena:
             hodnota = obracena_pismena[znak]
         elif znak == "\n" or  znak == " ":
-            hodnota = ""
+            hodnota = znak
         else:
             hodnota = znak
             exit_code = 2
         vysledek =   hodnota + vysledek 
-    return  vysledek.strip(), exit_code
+        #exit_code = max(exit_code) 
+    return  vysledek, exit_code
 
-def chybovy_vystup():
-    if exit_code == 0:
-        exit(0)
-    elif exit_code == 2:
-        exit(2)
 
 soubory = []
 for arg in sys.argv[1:]:
     if arg == "-":
         soubory.append("-")
     elif arg == "--help":
-        soubory.append("--help")
         exit(f"Zadat lze - nebo dokument jménem .txt")
     elif arg.startswith("-"):
         #sys.stderr.write("Přepínač ")
@@ -63,23 +59,25 @@ if soubory == []:
     vstup = sys.stdin.read()
     vysledek, exit_code = otoc(vstup)
     print(vysledek)
-    x=chybovy_vystup()
+    exit(exit_code)
                       
 for soubor in soubory:
     if soubor == "-":
         vstup = sys.stdin.read()
         vysledek, exit_code = otoc(vstup)
         print(vysledek)
-        x=chybovy_vystup()             
-    else:    
-        with open (soubor, encoding="utf-8") as s:
-            text = s.readlines()
-            for vstup in text:
-                vysledek, exit_code = otoc(vstup)
-                print(vysledek)
-            chybovy_vystup()
-                
-
+        exit(exit_code)            
+    else:  
+        s = os.open (soubor, os.O_RDONLY)
+        text = os.read(s, 1024)
+        radky = text.decode("utf-8").splitlines()
+        max_exit_code = []
+        for radek in radky:
+            vysledek, exit_code = otoc(radek)
+            max_exit_code.append(exit_code)
+            print(vysledek)
+        exit(max(max_exit_code))
+            
 
 
 
